@@ -1,0 +1,19 @@
+{
+  "name": "urgence-environnement-api",
+  "version": "1.0.0",
+  "description": "Urgence Environnement's API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/craffate/urgence-environnement-api.git"
+  },
+  "author": "Cyril Raffatelli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/craffate/urgence-environnement-api/issues"
+  },
+  "homepage": "https://github.com/craffate/urgence-environnement-api#readme"
+}
