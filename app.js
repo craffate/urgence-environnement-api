@@ -22,11 +22,10 @@ app.get("/articles/:id", (req, res) => {
   let article = articles.filter(el => el.id == req.params.id);
 
   res.header('Access-Control-Allow-Origin', '*');
-  if (Object.keys(article).length === 0) {
-    res.status(404).send();
-  } else {
+  if (Object.keys(article).length > 0) {
     res.status(200).json(article);
   }
+  res.status(404).send();
 });
 
 app.listen(port, () => {
