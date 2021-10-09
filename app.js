@@ -38,7 +38,7 @@ app.all("/articles/:id", (req, res, next) => {
 });
 
 app.get("/articles/:id", (req, res) => {
-  res.status(200).json(req.article);
+  res.status(200).json(req.article[0]);
 });
 
 app.post("/articles/:id", (req, res) => {
