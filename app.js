@@ -2,11 +2,36 @@
 
 const fs = require("fs");
 const express = require("express");
+const mariadb = require('mariadb');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const secrets = require("./secrets.js");
 const app = express();
 const port = 3000;
+
+const pool = mariadb.createPool({
+     host: secrets.SQL_HOST, 
+     user: secrets.SQL_USER, 
+     password: secrets.SQL_PASSWORD,
+     database: secrets.SQL_DB,
+     connectionLimit: 5
+});
+
+async function dbQuery(query) {
+  let conn;
+  let ret;
+
+  try {
+    conn = await pool.getConnection();
+    ret = await conn.query(query);
+  } catch (err) {
+    console.log(err);
+    throw err;
+  } finally {
+    if (conn) conn.end();
+    return ret;
+  }
+}
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -19,38 +44,36 @@ app.all("*", (req, res, next) => {
   next();
 });
 
-app.all("/articles*", (req, res, next) => {
-  req.articles = JSON.parse(fs.readFileSync('./mock-articles.json', 'utf8'));
-  next();
+app.get("/articles", async (req, res) => {
+  const ret = await dbQuery("SELECT * FROM articles");
+
+  res.status(200).json(ret);
 });
 
-app.get("/articles", (req, res) => {
-  res.status(200).json(req.articles);
+app.post("/articles", async (req, res) => {
+  const ret = await dbQuery(`INSERT INTO articles (name, subtitle, description, price)
+  VALUES ('${req.body.name}', '${req.body.subtitle}', '${req.body.description}', ${req.body.price})`);
+
+  res.location(`/articles/${ret.insertId}`)
+  res.status(201).send("Created");
 });
 
-app.all("/articles/:id", (req, res, next) => {
-  let article = req.articles.filter(el => el.id == req.params.id);
+app.get("/articles/:id", async (req, res) => {
+  const ar = await dbQuery(`SELECT * FROM articles WHERE id=(${req.params.id})`);
 
-  res.header('Access-Control-Allow-Origin', '*');
-  if (Object.keys(article).length > 0) {
-    req.article = article;
-    next();
+  if (ar.length === 0) {
+    res.status(404).send("Not found");
+  } else {
+    res.status(200).json(ar[0]);
   }
-  res.status(404).send();
 });
 
-app.get("/articles/:id", (req, res) => {
-  res.status(200).json(req.article[0]);
-});
+app.post("/articles/:id", async (req, res) => {
+  const ret = await dbQuery(`UPDATE articles 
+  SET name='${req.body.name}', subtitle='${req.body.subtitle}', description='${req.body.description}', price=${req.body.price} WHERE id=(${req.params.id})`);
 
-app.post("/articles/:id", (req, res) => {
-  req.articles[req.params.id - 1] = req.body;
-  fs.writeFile('./mock-articles.json', JSON.stringify(req.articles), 'utf8', function (err) {
-    if (err) {
-      return console.log(err);
-    }
-  });
-  res.status(204).send();
+  res.location(`/articles/${req.params.id}`)
+  res.status(201).send("Updated");
 });
 
 app.listen(port, () => {
