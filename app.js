@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs");
 const express = require("express");
 const mariadb = require('mariadb');
 const bodyParser = require("body-parser");
