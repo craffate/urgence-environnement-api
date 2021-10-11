@@ -4,6 +4,7 @@ const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const secrets = require("./secrets.js");
 const app = express();
 const port = 3000;
 
