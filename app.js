@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const bcrypt = require("bcrypt");
 const mariadb = require('mariadb');
 const bodyParser = require("body-parser");
 const cors = require("cors");
