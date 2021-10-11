@@ -53,27 +53,45 @@ app.get("/articles", async (req, res) => {
 app.post("/articles", async (req, res) => {
   const ret = await dbQuery(`INSERT INTO articles (name, subtitle, description, price)
   VALUES ('${req.body.name}', '${req.body.subtitle}', '${req.body.description}', ${req.body.price})`);
-
-  res.location(`/articles/${ret.insertId}`)
-  res.status(201).send("Created");
+  
+  if (ret.affectedRows === 0) {
+    res.status(204).send();
+  } else {
+    res.location(`/articles/${ret.insertId}`)
+    res.status(201).send();
+  }
 });
 
 app.get("/articles/:id", async (req, res) => {
   const ar = await dbQuery(`SELECT * FROM articles WHERE id=(${req.params.id})`);
 
   if (ar.length === 0) {
-    res.status(404).send("Not found");
+    res.status(404).send();
   } else {
     res.status(200).json(ar[0]);
   }
 });
 
-app.post("/articles/:id", async (req, res) => {
+app.put("/articles/:id", async (req, res) => {
   const ret = await dbQuery(`UPDATE articles 
   SET name='${req.body.name}', subtitle='${req.body.subtitle}', description='${req.body.description}', price=${req.body.price} WHERE id=(${req.params.id})`);
 
-  res.location(`/articles/${req.params.id}`)
-  res.status(201).send("Updated");
+  if (ret.affectedRows === 0) {
+    res.status(204).send();
+  } else {
+    res.location(`/articles/${req.params.id}`)
+    res.status(200).send();
+  }
+});
+
+app.delete("/articles/:id", async (req, res) => {
+  const ret = await dbQuery(`DELETE FROM articles WHERE id=(${req.params.id})`);
+
+  if (ret.affectedRows === 0) {
+    res.status(204).send();
+  } else {
+    res.status(200).send("Resource deleted");
+  }
 });
 
 app.listen(port, () => {
