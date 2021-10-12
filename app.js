@@ -33,6 +33,10 @@ async function dbQuery(query) {
   }
 }
 
+async function dbQueryUser(user) {
+  return dbQuery(`SELECT * FROM users WHERE username=('${user}')`);
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -91,6 +95,20 @@ app.delete("/articles/:id", async (req, res) => {
     res.status(204).send();
   } else {
     res.status(200).send("Resource deleted");
+  }
+});
+
+app.post("/auth/signup", async (req, res) => {
+  const ar = await dbQueryUser(req.body.username);
+
+  if (ar.length === 0) {
+    bcrypt.hash(req.body.password, secrets.BCRYPT_SALTROUNDS, (err, hash) => {
+      dbQuery(`INSERT INTO users (username, password, role)
+      VALUES ('${req.body.username}', '${hash}', ${req.body.role});`);
+      res.status(201).send("Registered successfully");
+    });
+  } else {
+    res.status(418).send("User already exists");
   }
 });
 
