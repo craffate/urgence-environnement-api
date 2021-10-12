@@ -112,6 +112,18 @@ app.post("/auth/signup", async (req, res) => {
   }
 });
 
+app.post("/auth/signin", async (req, res) => {
+  const usr = await dbQueryUser(req.body.username);
+
+  bcrypt.compare(req.body.password, usr[0].password, (err, result) => {
+    if (result === true) {
+      res.status(200).send();
+    } else {
+      res.status(401).send();
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
