@@ -38,6 +38,27 @@ async function dbQueryUser(user) {
   return dbQuery(`SELECT * FROM users WHERE username=('${user}')`);
 }
 
+function tokenVerify(req, res, next) {
+  let token = req.headers.authorization.split(' ')[1];
+  let payload = jwt.verify(token, secrets.SHARED_SECRET);
+
+  if (token === 'null') {
+    return res.status(401).send();
+  }
+  if (!payload) {
+    return res.status(401).send();
+  }
+  req.payload = payload;
+  next();
+}
+
+function tokenAdminVerify(req, res, next) {
+  if (req.payload.role !== 0) {
+    return res.status(401).send();
+  }
+  next();
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -55,7 +76,7 @@ app.get("/articles", async (req, res) => {
   res.status(200).json(ret);
 });
 
-app.post("/articles", async (req, res) => {
+app.post("/articles", [tokenVerify, tokenAdminVerify], async (req, res) => {
   const ret = await dbQuery(`INSERT INTO articles (name, subtitle, description, price)
   VALUES ('${req.body.name}', '${req.body.subtitle}', '${req.body.description}', ${req.body.price})`);
   
@@ -77,7 +98,7 @@ app.get("/articles/:id", async (req, res) => {
   }
 });
 
-app.put("/articles/:id", async (req, res) => {
+app.put("/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) => {
   const ret = await dbQuery(`UPDATE articles 
   SET name='${req.body.name}', subtitle='${req.body.subtitle}', description='${req.body.description}', price=${req.body.price} WHERE id=(${req.params.id})`);
 
@@ -89,7 +110,7 @@ app.put("/articles/:id", async (req, res) => {
   }
 });
 
-app.delete("/articles/:id", async (req, res) => {
+app.delete("/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) => {
   const ret = await dbQuery(`DELETE FROM articles WHERE id=(${req.params.id})`);
 
   if (ret.affectedRows === 0) {
