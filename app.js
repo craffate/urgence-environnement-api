@@ -120,7 +120,7 @@ app.post("/auth/signin", async (req, res) => {
     const match = await bcrypt.compare(req.body.password, usr[0].password);
   
     if (match) {
-      let token = jwt.sign({ subject: usr[0].id }, secrets.SHARED_SECRET);
+      let token = jwt.sign({ id: usr[0].id, role: usr[0].role }, secrets.SHARED_SECRET);
 
       res.header('Authorization', 'Bearer ' + token)
       res.header('Access-Control-Expose-Headers', 'Authorization');
@@ -131,7 +131,6 @@ app.post("/auth/signin", async (req, res) => {
   } catch (err) {
     res.status(401).send("Invalid user");
   }
-
 });
 
 app.listen(port, () => {
