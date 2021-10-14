@@ -3,7 +3,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const mariadb = require("mariadb");
-const jwt = require("express-jwt");
+const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const secrets = require("./secrets.js");
@@ -38,11 +38,6 @@ async function dbQueryUser(user) {
   return dbQuery(`SELECT * FROM users WHERE username=('${user}')`);
 }
 
-app.use(jwt({
-  secret: secrets.SHARED_SECRET,
-  algorithms: ['RS256'],
-  credentialsRequired: false
-}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -121,13 +116,21 @@ app.post("/auth/signup", async (req, res) => {
 app.post("/auth/signin", async (req, res) => {
   const usr = await dbQueryUser(req.body.username);
 
-  bcrypt.compare(req.body.password, usr[0].password, (err, result) => {
-    if (result === true) {
+  try {
+    const match = await bcrypt.compare(req.body.password, usr[0].password);
+  
+    if (match) {
+      let token = jwt.sign({ subject: usr[0].id }, secrets.SHARED_SECRET);
+
+      res.header('Authorization', 'Bearer ' + token)
       res.status(200).send();
     } else {
-      res.status(401).send();
+      res.status(401).send("Invalid password");
     }
-  });
+  } catch (err) {
+    res.status(401).send("Invalid user");
+  }
+
 });
 
 app.listen(port, () => {
