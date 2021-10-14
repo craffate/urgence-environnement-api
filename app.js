@@ -123,6 +123,7 @@ app.post("/auth/signin", async (req, res) => {
       let token = jwt.sign({ subject: usr[0].id }, secrets.SHARED_SECRET);
 
       res.header('Authorization', 'Bearer ' + token)
+      res.header('Access-Control-Expose-Headers', 'Authorization');
       res.status(200).send();
     } else {
       res.status(401).send("Invalid password");
