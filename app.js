@@ -2,7 +2,8 @@
 
 const express = require("express");
 const bcrypt = require("bcrypt");
-const mariadb = require('mariadb');
+const mariadb = require("mariadb");
+const jwt = require("express-jwt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const secrets = require("./secrets.js");
@@ -37,6 +38,11 @@ async function dbQueryUser(user) {
   return dbQuery(`SELECT * FROM users WHERE username=('${user}')`);
 }
 
+app.use(jwt({
+  secret: secrets.SHARED_SECRET,
+  algorithms: ['RS256'],
+  credentialsRequired: false
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
