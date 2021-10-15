@@ -6,6 +6,8 @@ const mariadb = require("mariadb");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require("multer");
+const upload = multer({ dest: "public/" });
 const secrets = require("./secrets.js");
 const app = express();
 const port = 3000;
@@ -117,6 +119,20 @@ app.delete("/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) =>
     res.status(204).send();
   } else {
     res.status(200).send("Resource deleted");
+  }
+});
+
+app.post("/img/articles/:id", [tokenVerify, tokenAdminVerify, upload.single("img")], async (res, req) => {
+  if (!req.file) {
+    res.status(204).send();
+  } else {
+    const ret = await dbQuery(`INSERT INTO images ('path', 'article_id')
+    VALUES ('img', ${req.params.id});`);
+
+    if (ret.affectedRows === 0) {
+      res.status(204).send();
+    }
+    res.status(200).send();
   }
 });
 
