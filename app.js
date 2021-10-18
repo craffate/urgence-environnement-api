@@ -1,5 +1,6 @@
 "use strict";
 
+const secrets = require("./secrets.js");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const mariadb = require("mariadb");
@@ -7,8 +8,7 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
-const upload = multer({ dest: "public/" });
-const secrets = require("./secrets.js");
+const upload = multer({ dest: secrets.MULTER_FOLDER });
 const app = express();
 const port = 3000;
 
@@ -134,6 +134,13 @@ app.post("/img/articles/:id", [tokenVerify, tokenAdminVerify, upload.single("art
     }
     res.status(200).send();
   }
+});
+
+app.get("/img/articles/:id", async (req, res) => {
+  const ar = await dbQuery(`SELECT * FROM images WHERE article_id=(${req.params.id})`);
+  let ret = await ar.map(el => `${req.protocol}://${req.hostname}:${port}/${secrets.MULTER_FOLDER}/${el.filename}`);
+
+  res.status(200).json(ret);
 });
 
 app.post("/auth/signup", async (req, res) => {
