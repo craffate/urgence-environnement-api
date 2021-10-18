@@ -122,12 +122,12 @@ app.delete("/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) =>
   }
 });
 
-app.post("/img/articles/:id", [tokenVerify, tokenAdminVerify, upload.single("img")], async (res, req) => {
+app.post("/img/articles/:id", [tokenVerify, tokenAdminVerify, upload.single("article")], async (req, res) => {
   if (!req.file) {
     res.status(204).send();
   } else {
-    const ret = await dbQuery(`INSERT INTO images ('path', 'article_id')
-    VALUES ('img', ${req.params.id});`);
+    const ret = await dbQuery(`INSERT INTO images (filename, mimetype, article_id)
+    VALUES ('${req.file.filename}', '${req.file.mimetype}', ${req.params.id});`);
 
     if (ret.affectedRows === 0) {
       res.status(204).send();
