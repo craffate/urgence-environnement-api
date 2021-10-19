@@ -136,6 +136,16 @@ app.post("/img/articles/:id", [tokenVerify, tokenAdminVerify, upload.single("art
   }
 });
 
+app.delete("/img/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) => {
+  const ret = await dbQuery(`DELETE FROM images WHERE id=(${req.params.id})`);
+
+  if (ret.affectedRows === 0) {
+    res.status(204).send();
+  } else {
+    res.status(200).send("Resource deleted");
+  }
+});
+
 app.get("/img/articles/:id", async (req, res) => {
   const ar = await dbQuery(`SELECT * FROM images WHERE article_id=(${req.params.id})`);
   let ret = await ar.map(el => `/${secrets.STATIC_FOLDER}/${el.filename}`);
