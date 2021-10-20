@@ -78,9 +78,15 @@ app.get("/articles", async (req, res) => {
   res.status(200).json(ret);
 });
 
+app.get("/categories", async (req, res) => {
+  const ret = await dbQuery("SELECT * FROM categories");
+
+  res.status(200).json(ret);
+});
+
 app.post("/articles", [tokenVerify, tokenAdminVerify], async (req, res) => {
-  const ret = await dbQuery(`INSERT INTO articles (name, subtitle, description, price)
-  VALUES ('${req.body.name}', '${req.body.subtitle}', '${req.body.description}', ${req.body.price})`);
+  const ret = await dbQuery(`INSERT INTO articles (name, subtitle, description, price, category_id)
+  VALUES ('${req.body.name}', '${req.body.subtitle}', '${req.body.description}', ${req.body.price}, ${req.body.category_id})`);
   
   if (ret.affectedRows === 0) {
     res.status(204).send();
@@ -102,7 +108,7 @@ app.get("/articles/:id", async (req, res) => {
 
 app.put("/articles/:id", [tokenVerify, tokenAdminVerify], async (req, res) => {
   const ret = await dbQuery(`UPDATE articles 
-  SET name='${req.body.name}', subtitle='${req.body.subtitle}', description='${req.body.description}', price=${req.body.price} WHERE id=(${req.params.id})`);
+  SET name='${req.body.name}', subtitle='${req.body.subtitle}', description='${req.body.description}', price=${req.body.price}, category_id=${req.body.category_id} WHERE id=(${req.params.id})`);
 
   if (ret.affectedRows === 0) {
     res.status(204).send();
