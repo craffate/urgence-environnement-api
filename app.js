@@ -4,6 +4,7 @@ const secrets = require("./secrets.js");
 const express = require("express");
 const sequelize = require('./db');
 const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -19,13 +20,19 @@ const Image = require('./models/image');
 
 Article.hasMany(Image);
 
+const sessionStore = new SequelizeStore({
+  db: sequelize
+});
+
+sessionStore.sync();
+
 app.use(session({
   secret: secrets.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   unset: 'keep',
   name: 'sid',
-  store: env === 'production' ? sessionStore : new session.MemoryStore,
+  store: sessionStore,
   cookie: {
     secure: env === 'production' ? true : false,
   }
