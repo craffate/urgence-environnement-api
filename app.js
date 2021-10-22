@@ -4,6 +4,7 @@ const secrets = require("./secrets.js");
 const express = require("express");
 const sequelize = require('./db');
 const session = require("express-session");
+const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
@@ -104,7 +105,10 @@ app.get("/img/articles/:id", async (req, res) => {
 });
 
 app.post("/auth/signup", async (req, res) => {
-  await User.create(req.body);
+  bcrypt.hash(req.body.password, secrets.BCRYPT_SALTROUNDS, (err, hash) => {
+    req.body.password = hash;
+    User.create(req.body);
+  });
 
   res.status(201).send();
 });
@@ -112,7 +116,7 @@ app.post("/auth/signup", async (req, res) => {
 app.post("/auth/signin", async (req, res) => {
   const user = await User.findOne({
     where: {
-      'username': req.body.name
+      'username': req.body.username
     }
   });
   const match = await bcrypt.compare(req.body.password, user.password);

@@ -2,8 +2,6 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
-const bcrypt = require('bcrypt');
-const secrets = require('../secrets');
 
 const User = sequelize.define('User', {
   id: {
@@ -19,12 +17,7 @@ const User = sequelize.define('User', {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-    set(value) {
-      bcrypt.hash(value, secrets.BCRYPT_SALTROUNDS, (err, hash) => {
-        this.setDataValue('password', hash);
-      });
-    }
+    allowNull: false
   },
   role: {
     type: DataTypes.INTEGER,
