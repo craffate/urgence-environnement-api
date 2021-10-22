@@ -21,7 +21,8 @@ const User = sequelize.define('User', {
   },
   role: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0
   }
 }, {
   tableName: 'users',
