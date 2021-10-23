@@ -1,6 +1,8 @@
 "use strict";
 
 const secrets = require("./secrets.js");
+const https = require("https");
+const fs = require("fs");
 const express = require("express");
 const sequelize = require('./db');
 const session = require("express-session");
@@ -20,6 +22,11 @@ const Image = require('./models/image');
 
 Article.hasMany(Image);
 
+const httpsOptions = {
+  key: fs.readFileSync(secrets.SSL_KEY),
+  cert: fs.readFileSync(secrets.SSL_CERT)
+}
+
 const sessionStore = new SequelizeStore({
   db: sequelize
 });
@@ -34,12 +41,16 @@ app.use(session({
   name: 'sid',
   store: sessionStore,
   cookie: {
-    secure: env === 'production' ? true : false,
+    secure: true,
+    httpOnly: false
   }
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: ['https://localhost:4200'],
+  credentials: true
+}));
 
 app.all("*", (req, res, next) => {
   const now = new Date();
@@ -136,7 +147,7 @@ app.post("/auth/signin", async (req, res) => {
   }
 });
 
-app.listen(port, async () => {
+https.createServer(httpsOptions, app).listen(port, async () => {
   try {
     console.log('Synchronizing Sequelize models...');
     await sequelize.sync({
