@@ -19,8 +19,10 @@ const env = app.get('env');
 const User = require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
+const Category = require('./models/category')
 
 Article.hasMany(Image);
+Category.hasMany(Article);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
@@ -59,16 +61,32 @@ app.all("*", (req, res, next) => {
   next();
 });
 
+app.get("/categories", async (req, res) => {
+  const ret = await Category.findAll();
+
+  res.status(200).json(ret);
+});
+
+app.get("/categories/:slug", async (req, res) => {
+  const category = await Category.findOne({
+    where: { slug: req.params.slug }
+  });
+  const ret = await category.getArticles();
+
+  res.status(200).json(ret);
+});
+
 app.get("/articles", async (req, res) => {
     const ret = await Article.findAll();
 
     res.status(200).json(ret);
 });
 
-app.post("/articles", async (req, res) => {
-    const article = await Article.create(req.body);
+app.post("/articles/:categoryId", async (req, res) => {
+  const category = await Category.findByPk(req.params.categoryId);
+  const article = await category.createArticle(req.body);
 
-    res.location(`/articles/${article.id}`);
+    res.location(`/articles/${category.slug}/${article.id}`);
     res.status(201).send();
 });
 
@@ -132,18 +150,25 @@ app.post("/auth/signup", async (req, res) => {
 });
 
 app.post("/auth/signin", async (req, res) => {
-  const user = await User.findOne({
-    where: {
-      'username': req.body.username
+  try {
+    const user = await User.findOne({
+      where: {
+        'username': req.body.username
+      }
+    });
+    const match = await bcrypt.compare(req.body.password, user.password);
+  
+    if (match) {
+      req.session.authenticated = true;
+      res.status(200).send('OK');
+    } else {
+      res.status(401).send();
     }
-  });
-  const match = await bcrypt.compare(req.body.password, user.password);
-
-  if (match) {
-    req.session.authenticated = true;
-    res.status(200).send('OK');
-  } else {
-    res.status(401).send();
+  } catch (err) {
+    if (err instanceof TypeError) {
+      res.status(401).send();
+    }
+    res.status(500).send();
   }
 });
 
@@ -154,6 +179,11 @@ https.createServer(httpsOptions, app).listen(port, async () => {
       force: env === 'production' ? false : true,
       alter: env === 'production' ? false : true,
     });
+    await Category.bulkCreate([
+      { name: "Mobilier", slug: "mobilier", description: "Mobilier du classique comme futuriste" },
+      { name: "Occasion", slug: "occasion", description: "Differents objets d'occasion" },
+      { name: "Divers", slug: "divers" }
+    ]);
   } catch (err) {
     console.error(err);
   }
