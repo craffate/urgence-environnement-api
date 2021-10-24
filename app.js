@@ -23,6 +23,7 @@ const Category = require('./models/category')
 
 Article.hasMany(Image);
 Category.hasMany(Article);
+Article.belongsTo(Category);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
@@ -97,12 +98,11 @@ app.get("/articles/:id", async (req, res) => {
 });
 
 app.put("/articles/:id", async (req, res) => {
-  await Article.update(req.body, {
-    where: {
-      'id': req.params.id
-    }
-  });
-  res.location(`/articles/${req.params.id}`)
+  const article = await Article.findByPk(req.params.id);
+
+  await article.setCategory(req.body.categoryId);
+  await article.update(req.body);
+
   res.status(200).send();
 });
 
