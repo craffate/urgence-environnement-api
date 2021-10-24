@@ -19,7 +19,6 @@ const env = app.get('env');
 const User = require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
-const Category = require('./models/category')
 
 Article.hasMany(Image);
 Category.hasMany(Article);
@@ -159,7 +158,7 @@ app.post("/auth/signin", async (req, res) => {
     const match = await bcrypt.compare(req.body.password, user.password);
   
     if (match) {
-      req.session.authenticated = true;
+      req.session.userId = user.id;
       res.status(200).send('OK');
     } else {
       res.status(401).send();
@@ -170,6 +169,18 @@ app.post("/auth/signin", async (req, res) => {
     }
     res.status(500).send();
   }
+});
+
+app.get("/users", async (req, res) => {
+  const ret = await User.findAll();
+
+  res.status(200).json(ret);
+});
+
+app.get("/users/:id", async (req, res) => {
+  const ret = await User.findByPk(req.params.id);
+
+  res.status(200).json(ret);
 });
 
 https.createServer(httpsOptions, app).listen(port, async () => {
