@@ -19,6 +19,7 @@ const env = app.get('env');
 const User = require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
+const Category = require('./models/category');
 
 Article.hasMany(Image);
 Category.hasMany(Article);
@@ -158,7 +159,7 @@ app.post("/auth/signin", async (req, res) => {
     const match = await bcrypt.compare(req.body.password, user.password);
   
     if (match) {
-      req.session.userId = user.id;
+      req.session.user = { 'username': user.username, 'role': user.role };
       res.status(200).send('OK');
     } else {
       res.status(401).send();
@@ -183,6 +184,10 @@ app.get("/users/:id", async (req, res) => {
   res.status(200).json(ret);
 });
 
+app.get("/session", async (req, res) => {
+  res.status(200).json(req.session.user);
+});
+
 https.createServer(httpsOptions, app).listen(port, async () => {
   try {
     console.log('Synchronizing Sequelize models...');
@@ -195,6 +200,12 @@ https.createServer(httpsOptions, app).listen(port, async () => {
       { name: "Occasion", slug: "occasion", description: "Differents objets d'occasion" },
       { name: "Divers", slug: "divers" }
     ]);
+    bcrypt.hash('admin', secrets.BCRYPT_SALTROUNDS, (err, hash) => {
+      User.create({ username: 'admin', password: hash, role: 1 });
+    });
+    bcrypt.hash('user', secrets.BCRYPT_SALTROUNDS, (err, hash) => {
+      User.create({ username: 'user', password: hash, role: 0 });
+    });
   } catch (err) {
     console.error(err);
   }
