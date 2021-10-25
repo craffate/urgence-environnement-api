@@ -20,10 +20,13 @@ const User = require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
 const Category = require('./models/category');
+const Order = require('./models/order');
 
 Article.hasMany(Image);
 Category.hasMany(Article);
 Article.belongsTo(Category);
+Order.hasMany(Article);
+Order.belongsTo(User);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
@@ -159,7 +162,7 @@ app.post("/auth/signin", async (req, res) => {
     const match = await bcrypt.compare(req.body.password, user.password);
   
     if (match) {
-      req.session.user = { 'username': user.username, 'role': user.role };
+      req.session.user = { 'id': user.id, 'username': user.username, 'role': user.role };
       res.status(200).send('OK');
     } else {
       res.status(401).send();
@@ -182,6 +185,34 @@ app.get("/users/:id", async (req, res) => {
   const ret = await User.findByPk(req.params.id);
 
   res.status(200).json(ret);
+});
+
+app.get("/orders", async (req, res) => {
+  let ret;
+
+  if (req.session.session) {
+    const user = await User.findOne(req.session.user.id);
+
+    ret = user.getOrders();
+  } else {
+    ret = await Order.findAll();
+  }
+
+  res.status(200).json(ret);
+});
+
+app.get("/orders/:id", async (req, res) => {
+  const ret = await Order.findByPk(req.params.id);
+
+  res.status(200).json(ret);
+});
+
+app.put("/orders", async (req, res) => {
+  const session = await sessionStore.get(req.sessionID);
+  const user = await User.findByPk(session.id);
+
+  user.createOrder(req.body);
+  res.status(200).send();
 });
 
 app.get("/session", async (req, res) => {
