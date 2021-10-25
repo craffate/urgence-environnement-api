@@ -43,7 +43,7 @@ app.use(session({
   secret: secrets.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  unset: 'keep',
+  unset: 'destroy',
   name: 'sid',
   store: sessionStore,
   cookie: {
@@ -173,6 +173,13 @@ app.post("/auth/signin", async (req, res) => {
     }
     res.status(500).send();
   }
+});
+
+app.post("/auth/signout", async (req, res) => {
+  req.session.destroy();
+  
+  res.clearCookie('sid');
+  res.status(200).send();
 });
 
 app.get("/users", async (req, res) => {
