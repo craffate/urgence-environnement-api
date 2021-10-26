@@ -27,6 +27,7 @@ Category.hasMany(Article);
 Article.belongsTo(Category);
 Order.hasMany(Article);
 Order.belongsTo(User);
+User.hasMany(Order);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
@@ -197,10 +198,10 @@ app.get("/users/:id", async (req, res) => {
 app.get("/orders", async (req, res) => {
   let ret;
 
-  if (req.session.session) {
-    const user = await User.findOne(req.session.user.id);
+  if (req.session) {
+    const user = await User.findByPk(req.session.user.id);
 
-    ret = user.getOrders();
+    ret = await user.getOrders();
   } else {
     ret = await Order.findAll();
   }
@@ -215,10 +216,11 @@ app.get("/orders/:id", async (req, res) => {
 });
 
 app.put("/orders", async (req, res) => {
-  const session = await sessionStore.get(req.sessionID);
-  const user = await User.findByPk(session.id);
+  const user = await User.findByPk(req.session.user.id);
+  const order = await Order.create({ total: 0, status: 'Processing' });
+  await order.addArticles(req.body.map(({id}) => id));
 
-  user.createOrder(req.body);
+  user.addOrder(order);
   res.status(200).send();
 });
 
