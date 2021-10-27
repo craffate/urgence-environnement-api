@@ -59,65 +59,15 @@ app.use(cors({
   credentials: true
 }));
 
+app.use('/articles', require('./routes/articles'));
+app.use('/users', require('./routes/users'));
+app.use('/orders', require('./routes/orders'));
+
 app.all("*", (req, res, next) => {
   const now = new Date();
 
   console.log(`[${now.toUTCString()}] ${req.originalUrl} requested from ${req.hostname} (${req.ip})`);
   next();
-});
-
-app.get("/categories", async (req, res) => {
-  const ret = await Category.findAll();
-
-  res.status(200).json(ret);
-});
-
-app.get("/categories/:slug", async (req, res) => {
-  const category = await Category.findOne({
-    where: { slug: req.params.slug }
-  });
-  const ret = await category.getArticles();
-
-  res.status(200).json(ret);
-});
-
-app.get("/articles", async (req, res) => {
-    const ret = await Article.findAll();
-
-    res.status(200).json(ret);
-});
-
-app.post("/articles/:categoryId", async (req, res) => {
-  const category = await Category.findByPk(req.params.categoryId);
-  const article = await category.createArticle(req.body);
-
-    res.location(`/articles/${category.slug}/${article.id}`);
-    res.status(201).send();
-});
-
-app.get("/articles/:id", async (req, res) => {
-    const ret = await Article.findByPk(req.params.id);
-
-    res.status(200).json(ret);
-});
-
-app.put("/articles/:id", async (req, res) => {
-  const article = await Article.findByPk(req.params.id);
-
-  await article.setCategory(req.body.categoryId);
-  await article.update(req.body);
-
-  res.status(200).send();
-});
-
-app.delete("/articles/:id", async (req, res) => {
-  await Article.destroy({
-    where: {
-      'id': req.params.id
-    }
-  });
-
-  res.status(200).send();
 });
 
 app.post("/img/articles/:id", upload.single("article"), async (req, res) => {
@@ -180,47 +130,6 @@ app.post("/auth/signout", async (req, res) => {
   req.session.destroy();
   
   res.clearCookie('sid');
-  res.status(200).send();
-});
-
-app.get("/users", async (req, res) => {
-  const ret = await User.findAll();
-
-  res.status(200).json(ret);
-});
-
-app.get("/users/:id", async (req, res) => {
-  const ret = await User.findByPk(req.params.id);
-
-  res.status(200).json(ret);
-});
-
-app.get("/orders", async (req, res) => {
-  let ret;
-
-  if (req.session) {
-    const user = await User.findByPk(req.session.user.id);
-
-    ret = await user.getOrders();
-  } else {
-    ret = await Order.findAll();
-  }
-
-  res.status(200).json(ret);
-});
-
-app.get("/orders/:id", async (req, res) => {
-  const ret = await Order.findByPk(req.params.id);
-
-  res.status(200).json(ret);
-});
-
-app.put("/orders", async (req, res) => {
-  const user = await User.findByPk(req.session.user.id);
-  const order = await Order.create({ total: 0, status: 'Processing' });
-  await order.addArticles(req.body.map(({id}) => id));
-
-  user.addOrder(order);
   res.status(200).send();
 });
 

@@ -11,7 +11,7 @@ const Order = sequelize.define('Order', {
     primaryKey: true
   },
   total: {
-    type: DataTypes.INTEGER(11).UNSIGNED,
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
     allowNull: false,
   },
   status: {

@@ -28,7 +28,7 @@ const Article = sequelize.define('Article', {
     allowNull: false
   },
   price: {
-    type: DataTypes.DECIMAL(10, 2),
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
     allowNull: false
   }
 }, {
