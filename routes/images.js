@@ -22,6 +22,7 @@ router.route('/')
 })
 .post(upload.single("image"), async (req, res) => {
   const ret = await Image.build(req.file);
+  ret.ArticleId = req.body.articleId;
   ret.save();
 
   res.status(200).json(ret);
