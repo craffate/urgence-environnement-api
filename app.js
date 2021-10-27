@@ -64,6 +64,8 @@ app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
 app.use('/images', require('./routes/images'));
 
+app.use('/static/', express.static('./static'));
+
 app.all("*", (req, res, next) => {
   const now = new Date();
 
