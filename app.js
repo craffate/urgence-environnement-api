@@ -62,36 +62,13 @@ app.use(cors({
 app.use('/articles', require('./routes/articles'));
 app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
+app.use('/images', require('./routes/images'));
 
 app.all("*", (req, res, next) => {
   const now = new Date();
 
   console.log(`[${now.toUTCString()}] ${req.originalUrl} requested from ${req.hostname} (${req.ip})`);
   next();
-});
-
-app.post("/img/articles/:id", upload.single("article"), async (req, res) => {
-  const article = await Article.findByPk(req.params.id);
-
-  article.createImage(req.file);
-
-  res.status(200).send();
-});
-
-app.delete("/img/articles/:id", async (req, res) => {
-  await Image.destroy({
-    where: {
-      id: req.params.id
-    }
-  });
-
-  res.status(200).send();
-});
-
-app.get("/img/articles/:id", async (req, res) => {
-  const ret = await Image.findByPk(req.params.id);
-
-  res.status(200).json(ret);
 });
 
 app.post("/auth/signup", async (req, res) => {
