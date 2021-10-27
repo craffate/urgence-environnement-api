@@ -6,8 +6,6 @@ const multer = require('multer');
 const upload = multer({ dest: secrets.STATIC_FOLDER });
 const Image = require('../models/image');
 
-
-
 router.param('imageId', async (req, res, next, id) => {
   req.image = await Image.findByPk(id);
 
@@ -16,7 +14,7 @@ router.param('imageId', async (req, res, next, id) => {
 
 router.route('/')
 .get(async (req, res) => {
-  const ret = await Image.findAll();
+  const ret = await (req.query.articleId ? Image.findAll({ where: { ArticleId: req.query.articleId }}) : Image.findAll());
 
   res.status(200).json(ret);
 })
