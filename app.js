@@ -144,17 +144,10 @@ https.createServer(httpsOptions, app).listen(port, async () => {
       force: env === 'production' ? false : true,
       alter: env === 'production' ? false : true,
     });
-    await Category.bulkCreate([
-      { name: "Mobilier", slug: "mobilier", description: "Mobilier du classique comme futuriste" },
-      { name: "Occasion", slug: "occasion", description: "Differents objets d'occasion" },
-      { name: "Divers", slug: "divers" }
-    ]);
-    bcrypt.hash('admin', secrets.BCRYPT_SALTROUNDS, (err, hash) => {
-      User.create({ username: 'admin', password: hash, role: 1 });
-    });
-    bcrypt.hash('user', secrets.BCRYPT_SALTROUNDS, (err, hash) => {
-      User.create({ username: 'user', password: hash, role: 0 });
-    });
+    if (env === 'dev') {
+      require('./fixtures/users');
+      require('./fixtures/articles');
+    }
   } catch (err) {
     console.error(err);
   }
