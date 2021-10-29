@@ -126,6 +126,8 @@ https.createServer(httpsOptions, app).listen(port, async () => {
     if (env === 'dev') {
       require('./fixtures/users');
       require('./fixtures/articles');
+      require('./fixtures/orders');
+      require('./fixtures/images');
     }
   } catch (err) {
     console.error(err);
