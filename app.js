@@ -117,20 +117,5 @@ app.get("/session", async (req, res) => {
 });
 
 https.createServer(httpsOptions, app).listen(port, async () => {
-  try {
-    console.log('Synchronizing Sequelize models...');
-    await sequelize.sync({
-      force: env === 'production' ? false : true,
-      alter: env === 'production' ? false : true,
-    });
-    if (env === 'dev') {
-      require('./fixtures/users');
-      require('./fixtures/articles');
-      require('./fixtures/orders');
-      require('./fixtures/images');
-    }
-  } catch (err) {
-    console.error(err);
-  }
   console.log(`Listening on port ${port}`);
 });
