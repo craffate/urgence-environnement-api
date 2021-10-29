@@ -63,6 +63,7 @@ app.use('/articles', require('./routes/articles'));
 app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
 app.use('/images', require('./routes/images'));
+app.use('/profile', require('./routes/profile'));
 
 app.use('/static/', express.static('./static'));
 
@@ -110,10 +111,6 @@ app.post("/auth/signout", async (req, res) => {
   
   res.clearCookie('sid');
   res.status(200).send();
-});
-
-app.get("/session", async (req, res) => {
-  res.status(200).json(req.session.user);
 });
 
 https.createServer(httpsOptions, app).listen(port, async () => {
