@@ -14,7 +14,16 @@ router.param('imageId', async (req, res, next, id) => {
 
 router.route('/')
 .get(async (req, res) => {
-  const ret = await (req.query.articleId ? Image.findAll({ where: { ArticleId: req.query.articleId }}) : Image.findAll());
+  let ret;
+
+  if (req.query.articleId) {
+    ret = await Image.findAll({ where: { ArticleId: req.query.articleId }});
+  } else {
+    ret = await Image.findAll();
+  }
+  if (req.query.count) {
+    ret = ret.slice(0, req.query.count);
+  }
 
   res.status(200).json(ret);
 })
