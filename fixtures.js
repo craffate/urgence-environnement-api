@@ -19,6 +19,7 @@ sequelize.sync({
   force: true,
   alter: true
 }).then(() => {
+  require(__dirname + '/fixtures/categories');
   require(__dirname + '/fixtures/articles');
   require(__dirname + '/fixtures/orders');
   require(__dirname + '/fixtures/images');
