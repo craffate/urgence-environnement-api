@@ -7,7 +7,6 @@ const express = require("express");
 const sequelize = require('./db');
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
@@ -64,6 +63,7 @@ app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
 app.use('/images', require('./routes/images'));
 app.use('/profile', require('./routes/profile'));
+app.use('/auth', require('./routes/auth'));
 
 app.use('/static/', express.static('./static'));
 
@@ -72,45 +72,6 @@ app.all("*", (req, res, next) => {
 
   console.log(`[${now.toUTCString()}] ${req.originalUrl} requested from ${req.hostname} (${req.ip})`);
   next();
-});
-
-app.post("/auth/signup", async (req, res) => {
-  bcrypt.hash(req.body.password, secrets.BCRYPT_SALTROUNDS, (err, hash) => {
-    req.body.password = hash;
-    User.create(req.body);
-  });
-
-  res.status(201).send();
-});
-
-app.post("/auth/signin", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      where: {
-        'username': req.body.username
-      }
-    });
-    const match = await bcrypt.compare(req.body.password, user.password);
-  
-    if (match) {
-      req.session.user = { 'id': user.id, 'username': user.username, 'role': user.role };
-      res.status(200).send('OK');
-    } else {
-      res.status(401).send();
-    }
-  } catch (err) {
-    if (err instanceof TypeError) {
-      res.status(401).send();
-    }
-    res.status(500).send();
-  }
-});
-
-app.post("/auth/signout", async (req, res) => {
-  req.session.destroy();
-  
-  res.clearCookie('sid');
-  res.status(200).send();
 });
 
 https.createServer(httpsOptions, app).listen(port, async () => {
