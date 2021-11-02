@@ -62,7 +62,6 @@ app.use('/articles', require('./routes/articles'));
 app.use('/users', require('./routes/users'));
 app.use('/orders', require('./routes/orders'));
 app.use('/images', require('./routes/images'));
-app.use('/profile', require('./routes/profile'));
 app.use('/auth', require('./routes/auth'));
 
 app.use('/static/', express.static('./static'));
