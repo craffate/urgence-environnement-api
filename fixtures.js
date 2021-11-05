@@ -9,6 +9,7 @@ const Image = require(__dirname + '/models/image');
 const User = require(__dirname + '/models/user');
 
 Article.hasMany(Image);
+Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
 Order.hasMany(Article);

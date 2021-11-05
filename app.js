@@ -22,6 +22,7 @@ const Category = require('./models/category');
 const Order = require('./models/order');
 
 Article.hasMany(Image);
+Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
 Order.hasMany(Article);
