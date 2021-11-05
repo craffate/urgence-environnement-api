@@ -14,7 +14,7 @@ router.use(async (req, res, next) => {
 
 router.param('userId', async (req, res, next, id) => {
   req.user = await User.findByPk(id, {
-    attributes: ['id', 'username', 'role']
+    attributes: ['id', 'username', 'role'],
   });
 
   if (req.user === null) {
@@ -25,41 +25,41 @@ router.param('userId', async (req, res, next, id) => {
 });
 
 router.route('/')
-.get(async (req, res) => {
-  const ret = await User.findAll({
-    attributes: ['id', 'username', 'role']
-  });
+    .get(async (req, res) => {
+      const ret = await User.findAll({
+        attributes: ['id', 'username', 'role'],
+      });
 
-  res.status(200).json(ret);
-})
-.post(async (req, res) => {
-  const [user, built] = await User.findOrBuild({
-    where: { username: req.body.username }
-  });
+      res.status(200).json(ret);
+    })
+    .post(async (req, res) => {
+      const [user, built] = await User.findOrBuild({
+        where: {username: req.body.username},
+      });
 
-  if (built === false) {
-    res.status(401).send('Username already in use');
-  } else {
-    user.password = req.body.password;
-    user.role = 0;
-    user.save();
-  }
-  res.status(201).json();
-});
+      if (built === false) {
+        res.status(401).send('Username already in use');
+      } else {
+        user.password = req.body.password;
+        user.role = 0;
+        user.save();
+      }
+      res.status(201).json();
+    });
 
 router.route('/:userId')
-.get((req, res) => {
-  res.status(200).json(req.user);
-})
-.patch(async (req, res) => {
-  await req.user.update(req.body);
-  
-  res.status(200).send();
-})
-.delete(async (req, res) => {
-  await req.user.destroy();
+    .get((req, res) => {
+      res.status(200).json(req.user);
+    })
+    .patch(async (req, res) => {
+      await req.user.update(req.body);
 
-  res.status(200).send();
-});
+      res.status(200).send();
+    })
+    .delete(async (req, res) => {
+      await req.user.destroy();
+
+      res.status(200).send();
+    });
 
 module.exports = router;

@@ -1,7 +1,7 @@
 'use strict';
 
 const secrets = require('./secrets.js');
-const { Sequelize } = require('sequelize');
+const {Sequelize} = require('sequelize');
 
 const sequelize = new Sequelize({
   dialect: secrets.SQL_DIALECT,

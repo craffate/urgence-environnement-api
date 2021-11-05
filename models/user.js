@@ -1,6 +1,6 @@
 'use strict';
 
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../db');
 
 const User = sequelize.define('User', {
@@ -8,28 +8,28 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER(11).UNSIGNED,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   role: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0
-  }
+    defaultValue: 0,
+  },
 }, {
   tableName: 'users',
   paranoid: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  deletedAt: 'deleted_at'
+  deletedAt: 'deleted_at',
 });
 
 module.exports = User;

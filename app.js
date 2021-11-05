@@ -1,19 +1,16 @@
-"use strict";
+'use strict';
 
-const secrets = require("./secrets.js");
-const https = require("https");
-const fs = require("fs");
-const express = require("express");
+const secrets = require('./secrets.js');
+const https = require('https');
+const fs = require('fs');
+const express = require('express');
 const sequelize = require('./db');
-const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const multer = require("multer");
-const upload = multer({ dest: secrets.STATIC_FOLDER });
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 const port = 3000;
-const env = app.get('env');
 
 const User = require('./models/user');
 const Article = require('./models/article');
@@ -31,11 +28,11 @@ User.hasMany(Order);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
-  cert: fs.readFileSync(secrets.SSL_CERT)
-}
+  cert: fs.readFileSync(secrets.SSL_CERT),
+};
 
 const sessionStore = new SequelizeStore({
-  db: sequelize
+  db: sequelize,
 });
 
 sessionStore.sync();
@@ -49,14 +46,14 @@ app.use(session({
   store: sessionStore,
   cookie: {
     secure: true,
-    httpOnly: false
-  }
+    httpOnly: false,
+  },
 }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors({
   origin: ['https://localhost:4200'],
-  credentials: true
+  credentials: true,
 }));
 
 app.use('/articles', require('./routes/articles'));
@@ -66,13 +63,6 @@ app.use('/images', require('./routes/images'));
 app.use('/auth', require('./routes/auth'));
 
 app.use('/static/', express.static('./static'));
-
-app.all("*", (req, res, next) => {
-  const now = new Date();
-
-  console.log(`[${now.toUTCString()}] ${req.originalUrl} requested from ${req.hostname} (${req.ip})`);
-  next();
-});
 
 https.createServer(httpsOptions, app).listen(port, async () => {
   console.log(`Listening on port ${port}`);

@@ -1,6 +1,6 @@
 'use strict';
 
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../db');
 
 const Image = sequelize.define('Image', {
@@ -8,25 +8,25 @@ const Image = sequelize.define('Image', {
     type: DataTypes.INTEGER(11).UNSIGNED,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   filename: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   mimetype: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   path: {
     type: DataTypes.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   tableName: 'images',
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  deletedAt: 'deleted_at'
+  deletedAt: 'deleted_at',
 });
 
 module.exports = Image;

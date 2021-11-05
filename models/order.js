@@ -1,6 +1,6 @@
 'use strict';
 
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../db');
 
 const Order = sequelize.define('Order', {
@@ -8,7 +8,7 @@ const Order = sequelize.define('Order', {
     type: DataTypes.INTEGER(11).UNSIGNED,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   total: {
     type: DataTypes.DECIMAL(10, 2).UNSIGNED,
@@ -16,14 +16,14 @@ const Order = sequelize.define('Order', {
   },
   status: {
     type: DataTypes.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   tableName: 'orders',
   paranoid: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  deletedAt: 'deleted_at'
+  deletedAt: 'deleted_at',
 });
 
 module.exports = Order;

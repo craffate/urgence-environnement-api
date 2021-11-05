@@ -12,37 +12,37 @@ router.param('articleId', async (req, res, next, id) => {
 });
 
 router.route('/')
-.get(async (req, res) => {
-  let ret;
+    .get(async (req, res) => {
+      let ret;
 
-  if (req.query.categoryId) {
-    const category = await Category.findByPk(req.query.categoryId);
-    ret = await category.getArticles({ include: Image });
-  } else {
-    ret = await Article.findAll({ include: Image });
-  }
+      if (req.query.categoryId) {
+        const category = await Category.findByPk(req.query.categoryId);
+        ret = await category.getArticles({include: Image});
+      } else {
+        ret = await Article.findAll({include: Image});
+      }
 
-  res.status(200).json(ret);
-})
-.post(async (req, res) => {
-  const ret = await Article.create(req.body);
+      res.status(200).json(ret);
+    })
+    .post(async (req, res) => {
+      const ret = await Article.create(req.body);
 
-  res.status(200).json(ret);
-});
+      res.status(200).json(ret);
+    });
 
 router.route('/:articleId')
-.get((req, res) => {
-  res.status(200).json(req.article);
-})
-.patch(async (req, res) => {
-  await req.article.update(req.body);
-  
-  res.status(200).send();
-})
-.delete(async (req, res) => {
-  await req.article.destroy();
+    .get((req, res) => {
+      res.status(200).json(req.article);
+    })
+    .patch(async (req, res) => {
+      await req.article.update(req.body);
 
-  res.status(200).send();
-});
+      res.status(200).send();
+    })
+    .delete(async (req, res) => {
+      await req.article.destroy();
+
+      res.status(200).send();
+    });
 
 module.exports = router;

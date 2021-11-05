@@ -14,17 +14,17 @@ router.use(async (req, res, next) => {
 
 
 router.route('/')
-.get(async (req, res) => {
-  const ret = req.user;
+    .get(async (req, res) => {
+      const ret = req.user;
 
-  res.status(200).json(ret);
-})
+      res.status(200).json(ret);
+    });
 
 router.route('/orders')
-.get(async (req, res) => {
-  const ret = await req.user.getOrders();
+    .get(async (req, res) => {
+      const ret = await req.user.getOrders();
 
-  res.status(200).json(ret);
-})
+      res.status(200).json(ret);
+    });
 
 module.exports = router;

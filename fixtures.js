@@ -18,7 +18,7 @@ User.hasMany(Order);
 
 sequelize.sync({
   force: true,
-  alter: true
+  alter: true,
 }).then(() => {
   require(__dirname + '/fixtures/categories');
   require(__dirname + '/fixtures/articles');

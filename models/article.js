@@ -1,6 +1,6 @@
 'use strict';
 
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../db');
 
 const Article = sequelize.define('Article', {
@@ -8,34 +8,34 @@ const Article = sequelize.define('Article', {
     type: DataTypes.INTEGER(11).UNSIGNED,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   sku: {
     type: DataTypes.STRING,
     allowNull: true,
-    unique: true
+    unique: true,
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   subtitle: {
     type: DataTypes.STRING,
-    allowNull: true
+    allowNull: true,
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
   },
   price: {
     type: DataTypes.DECIMAL(10, 2).UNSIGNED,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   tableName: 'articles',
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  deletedAt: 'deleted_at'
+  deletedAt: 'deleted_at',
 });
 
 module.exports = Article;
