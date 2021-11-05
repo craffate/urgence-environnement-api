@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const Article = require('../models/article');
 const Category = require('../models/category');
+const Image = require('../models/image');
 
 router.param('articleId', async (req, res, next, id) => {
   req.article = await Article.findByPk(id);
@@ -16,9 +17,9 @@ router.route('/')
 
   if (req.query.categoryId) {
     const category = await Category.findByPk(req.query.categoryId);
-    ret = await category.getArticles();
+    ret = await category.getArticles({ include: Image });
   } else {
-    ret = await Article.findAll();
+    ret = await Article.findAll({ include: Image });
   }
 
   res.status(200).json(ret);
