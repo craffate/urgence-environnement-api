@@ -18,6 +18,14 @@ const Order = sequelize.define('Order', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  shipping_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  shipping_address: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   method: {
     type: DataTypes.STRING,
     allowNull: false,
