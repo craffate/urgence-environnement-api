@@ -2,19 +2,20 @@
 
 const sequelize = require(__dirname + '/db');
 
+require(__dirname + '/models/user');
 const Article = require(__dirname + '/models/article');
 const Category = require(__dirname + '/models/category');
 const Order = require(__dirname + '/models/order');
 const Image = require(__dirname + '/models/image');
-const User = require(__dirname + '/models/user');
+const Payer = require(__dirname + '/models/payer');
 
 Article.hasMany(Image);
 Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
 Order.hasMany(Article);
-Order.belongsTo(User);
-User.hasMany(Order);
+Order.hasOne(Payer);
+Payer.belongsTo(Order);
 
 sequelize.sync({
   force: true,

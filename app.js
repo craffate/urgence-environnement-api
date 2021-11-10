@@ -12,19 +12,20 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const User = require('./models/user');
+require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
 const Category = require('./models/category');
 const Order = require('./models/order');
+const Payer = require('./models/payer');
 
 Article.hasMany(Image);
 Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
 Order.hasMany(Article);
-Order.belongsTo(User);
-User.hasMany(Order);
+Order.hasOne(Payer);
+Payer.belongsTo(Order);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),

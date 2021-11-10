@@ -3,32 +3,32 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../db');
 
-const Order = sequelize.define('Order', {
+const Payer = sequelize.define('Payer', {
   id: {
     type: DataTypes.INTEGER(11).UNSIGNED,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-  total: {
-    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
-    allowNull: false,
-  },
-  status: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  method: {
+  address: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'Autre',
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 }, {
-  tableName: 'orders',
-  paranoid: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  deletedAt: 'deleted_at',
+  tableName: 'payers',
+  timestamps: false,
 });
 
-module.exports = Order;
+module.exports = Payer;
