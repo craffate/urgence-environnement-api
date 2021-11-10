@@ -17,6 +17,9 @@ router.route('/')
     })
     .post(async (req, res) => {
       const ret = await Order.create(req.body);
+      req.body.payer.phone = JSON.parse(req.body.payer.phone).national_number;
+      await ret.createPayer(req.body.payer);
+      await ret.save();
 
       res.status(200).json(ret);
     });
