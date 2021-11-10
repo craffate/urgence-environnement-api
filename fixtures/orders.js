@@ -1,5 +1,6 @@
 'use strict';
 
+const Article = require('../models/article');
 const Order = require('../models/order');
 
 const jdupont = {
@@ -10,11 +11,11 @@ const jdupont = {
 };
 
 Order.bulkCreate([
-  {total: '99.99', status: 'COMPLETED', shipping_name: jdupont.name, shipping_address: jdupont.address, method: 'PayPal'},
-  {total: '10.00', status: 'COMPLETED', shipping_name: jdupont.name, shipping_address: jdupont.address, method: 'Autre'},
-  {total: '23.11', status: 'COMPLETED', shipping_name: jdupont.name, shipping_address: jdupont.address},
+  {total: '9.99', status: 'COMPLETED', shipping_name: jdupont.name, shipping_address: jdupont.address, method: 'PayPal'},
 ]).then((res) => {
-  res.forEach((order) => {
-    order.createPayer(jdupont);
+  res.forEach(async (order) => {
+    const article = await Article.findOne({where: {price: '9.99'}});
+    await order.createPayer(jdupont);
+    await order.setArticles([article]);
   });
 });

@@ -3,16 +3,17 @@
 const router = require('express').Router();
 const Payer = require('../models/payer');
 const Order = require('../models/order');
+const Article = require('../models/article');
 
 router.param('orderId', async (req, res, next, id) => {
-  req.order = await Order.findByPk(id, {include: Payer});
+  req.order = await Order.findByPk(id, {include: [Payer, Article]});
 
   next();
 });
 
 router.route('/')
     .get(async (req, res) => {
-      const ret = await Order.findAll({include: Payer});
+      const ret = await Order.findAll({include: [Payer, Article]});
 
       res.status(200).json(ret);
     })
