@@ -1,17 +1,18 @@
 'use strict';
 
 const router = require('express').Router();
+const Payer = require('../models/payer');
 const Order = require('../models/order');
 
 router.param('orderId', async (req, res, next, id) => {
-  req.order = await Order.findByPk(id);
+  req.order = await Order.findByPk(id, {include: Payer});
 
   next();
 });
 
 router.route('/')
     .get(async (req, res) => {
-      const ret = await Order.findAll();
+      const ret = await Order.findAll({include: Payer});
 
       res.status(200).json(ret);
     })
