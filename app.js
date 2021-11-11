@@ -16,16 +16,11 @@ require('./models/user');
 const Article = require('./models/article');
 const Image = require('./models/image');
 const Category = require('./models/category');
-const Order = require('./models/order');
-const Payer = require('./models/payer');
 
 Article.hasMany(Image);
 Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
-Order.hasMany(Article);
-Order.hasOne(Payer);
-Payer.belongsTo(Order);
 
 const httpsOptions = {
   key: fs.readFileSync(secrets.SSL_KEY),
@@ -59,7 +54,6 @@ app.use(cors({
 
 app.use('/articles', require('./routes/articles'));
 app.use('/users', require('./routes/users'));
-app.use('/orders', require('./routes/orders'));
 app.use('/images', require('./routes/images'));
 app.use('/auth', require('./routes/auth'));
 

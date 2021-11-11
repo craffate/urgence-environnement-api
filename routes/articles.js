@@ -1,7 +1,6 @@
 'use strict';
 
 const router = require('express').Router();
-const Op = require('sequelize').Op;
 const Article = require('../models/article');
 const Category = require('../models/category');
 const Image = require('../models/image');
@@ -18,9 +17,9 @@ router.route('/')
 
       if (req.query.categoryId) {
         const category = await Category.findByPk(req.query.categoryId);
-        ret = await category.getArticles({where: {OrderId: {[Op.eq]: null}}, include: Image});
+        ret = await category.getArticles({include: Image});
       } else {
-        ret = await Article.findAll({where: {OrderId: {[Op.eq]: null}}, include: Image});
+        ret = await Article.findAll({include: Image});
       }
 
       res.status(200).json(ret);

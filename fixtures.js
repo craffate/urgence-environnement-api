@@ -5,17 +5,12 @@ const sequelize = require(__dirname + '/db');
 require(__dirname + '/models/user');
 const Article = require(__dirname + '/models/article');
 const Category = require(__dirname + '/models/category');
-const Order = require(__dirname + '/models/order');
 const Image = require(__dirname + '/models/image');
-const Payer = require(__dirname + '/models/payer');
 
 Article.hasMany(Image);
 Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
-Order.hasMany(Article);
-Order.hasOne(Payer);
-Payer.belongsTo(Order);
 
 sequelize.sync({
   force: true,
@@ -23,7 +18,6 @@ sequelize.sync({
 }).then(() => {
   require(__dirname + '/fixtures/categories');
   require(__dirname + '/fixtures/articles');
-  require(__dirname + '/fixtures/orders');
   require(__dirname + '/fixtures/images');
   require(__dirname + '/fixtures/users');
   process.exitCode = 0;
