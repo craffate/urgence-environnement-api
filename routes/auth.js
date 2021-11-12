@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 router.route('/')
     .get(async (req, res) => {
       try {
-        if (req.session.user.role === 1) {
+        if (req.session.user && req.session.user.role === 1) {
           res.status(200).send();
         } else {
           res.status(401).send();
