@@ -7,7 +7,12 @@ const Category = require('../models/category');
 const Image = require('../models/image');
 
 router.param('articleId', async (req, res, next, id) => {
-  req.article = await Article.findByPk(id);
+  const query = {
+    attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price'],
+    include: [Image],
+  };
+
+  req.article = await Article.findByPk(id, query);
 
   next();
 });
