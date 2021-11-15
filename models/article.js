@@ -32,6 +32,7 @@ const Article = sequelize.define('Article', {
     allowNull: false,
   },
 }, {
+  paranoid: true,
   tableName: 'articles',
   createdAt: 'created_at',
   updatedAt: 'updated_at',

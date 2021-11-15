@@ -23,6 +23,7 @@ const Image = sequelize.define('Image', {
     allowNull: false,
   },
 }, {
+  paranoid: true,
   tableName: 'images',
   createdAt: 'created_at',
   updatedAt: 'updated_at',
