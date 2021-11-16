@@ -22,10 +22,11 @@ router.param('articleId', async (req, res, next, id) => {
 router.route('/')
     .get(async (req, res) => {
       const query = {
-        attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity'],
+        attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity', 'updated_at'],
         include: [Image],
         limit: pageLimit,
         offset: 0,
+        order: [['updated_at', 'DESC']],
       };
 
       if (req.query.page && req.query.page > 0) {
