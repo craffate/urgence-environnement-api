@@ -56,6 +56,7 @@ app.use('/articles', require('./routes/articles'));
 app.use('/users', require('./routes/users'));
 app.use('/images', require('./routes/images'));
 app.use('/auth', require('./routes/auth'));
+app.use('/categories', require('./routes/categories'));
 
 app.use('/static/', express.static('./static'));
 
