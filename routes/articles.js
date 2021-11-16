@@ -48,7 +48,15 @@ router.route('/')
       res.status(200).json(await Article.findAll(query));
     })
     .post(async (req, res) => {
+      const category = await Category.findByPk(req.body.Category.id);
+      const count = await Article.count({
+        include: [{model: Category, attributes: [], where: {id: req.body.Category.id}}],
+        paranoid: false,
+      });
       const ret = await Article.create(req.body);
+
+      await ret.setCategory(req.body.Category.id);
+      await ret.update({sku: category.slug.slice(0, 3).toUpperCase() + (count + 1).toString().padStart(5, '0')});
 
       res.status(200).json(ret);
     });
