@@ -11,7 +11,7 @@ const pageLimit = 10;
 router.param('articleId', async (req, res, next, id) => {
   const query = {
     attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity'],
-    include: [Image],
+    include: [{model: Image, attributes: ['id', 'filename', 'mimetype', 'path']}],
   };
 
   req.article = await Article.findByPk(id, query);
@@ -23,9 +23,10 @@ router.route('/')
     .get(async (req, res) => {
       const query = {
         attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity', 'updated_at'],
-        include: [Image],
+        include: [{model: Image, attributes: ['id', 'filename', 'mimetype', 'path']}],
         limit: pageLimit,
         offset: 0,
+        where: {quantity: {[Op.gt]: 0}},
         order: [['updated_at', 'DESC']],
       };
 
@@ -33,15 +34,15 @@ router.route('/')
         query['offset'] = (pageLimit * req.query.page) - pageLimit;
       }
       if (req.query.category) {
-        query.include.push({
+        query['include'].push({
           model: Category,
           attributes: [],
           where: {slug: req.query.category},
         });
       }
       if (req.query.name) {
-        query['where'] = {
-          name: {[Op.like]: '%' + req.query.name + '%'},
+        query['where']['name'] = {
+          [Op.like]: '%' + req.query.name + '%',
         };
       }
       res.status(200).json(await Article.findAll(query));
