@@ -6,7 +6,7 @@ const Article = require('../models/article');
 const Category = require('../models/category');
 const Image = require('../models/image');
 
-const pageLimit = 1;
+const pageLimit = 10;
 
 router.param('articleId', async (req, res, next, id) => {
   const query = {
