@@ -6,6 +6,8 @@ const Article = require('../models/article');
 const Category = require('../models/category');
 const Image = require('../models/image');
 
+const pageLimit = 1;
+
 router.param('articleId', async (req, res, next, id) => {
   const query = {
     attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price'],
@@ -22,8 +24,13 @@ router.route('/')
       const query = {
         attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price'],
         include: [Image],
+        limit: pageLimit,
+        offset: 0,
       };
 
+      if (req.query.page && req.query.page > 0) {
+        query['offset'] = (pageLimit * req.query.page) - pageLimit;
+      }
       if (req.query.category) {
         query.include.push({
           model: Category,
