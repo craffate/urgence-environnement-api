@@ -10,7 +10,7 @@ const pageLimit = 10;
 
 router.param('articleId', async (req, res, next, id) => {
   const query = {
-    attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price'],
+    attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity'],
     include: [Image],
   };
 
@@ -22,7 +22,7 @@ router.param('articleId', async (req, res, next, id) => {
 router.route('/')
     .get(async (req, res) => {
       const query = {
-        attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price'],
+        attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity'],
         include: [Image],
         limit: pageLimit,
         offset: 0,

@@ -31,6 +31,11 @@ const Article = sequelize.define('Article', {
     type: DataTypes.DECIMAL(10, 2).UNSIGNED,
     allowNull: false,
   },
+  quantity: {
+    type: DataTypes.INTEGER(11).UNSIGNED,
+    allowNull: false,
+    defaultValue: 1,
+  },
 }, {
   paranoid: true,
   tableName: 'articles',
