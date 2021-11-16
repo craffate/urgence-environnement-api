@@ -60,6 +60,6 @@ app.use('/categories', require('./routes/categories'));
 
 app.use('/static/', express.static('./static'));
 
-https.createServer(httpsOptions, app).listen(port, async () => {
+https.createServer(httpsOptions, app).listen(port, 'localhost', async () => {
   console.log(`Listening on port ${port}`);
 });
