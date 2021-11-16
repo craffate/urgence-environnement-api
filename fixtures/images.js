@@ -22,4 +22,8 @@ Image.bulkCreate([
   {filename: 'bro00001_3.jpg', mimetype: 'image/jpeg', path: 'static\\bro00001_3.jpg', ArticleId: 8},
   {filename: 'loi00001_1.jpg', mimetype: 'image/jpeg', path: 'static\\loi00001_1.jpg', ArticleId: 9},
   {filename: 'loi00001_2.jpg', mimetype: 'image/jpeg', path: 'static\\loi00001_2.jpg', ArticleId: 9},
+  {filename: 'mob00003_1.jpg', mimetype: 'image/jpeg', path: 'static\\mob00003_1.jpg', ArticleId: 10},
+  {filename: 'div00001_1.jpg', mimetype: 'image/jpeg', path: 'static\\div00001_1.jpg', ArticleId: 11},
+  {filename: 'div00001_2.jpg', mimetype: 'image/jpeg', path: 'static\\div00001_2.jpg', ArticleId: 11},
+  {filename: 'div00001_3.jpg', mimetype: 'image/jpeg', path: 'static\\div00001_3.jpg', ArticleId: 11},
 ]);
