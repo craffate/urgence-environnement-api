@@ -36,6 +36,32 @@ const Article = sequelize.define('Article', {
     allowNull: false,
     defaultValue: 1,
   },
+  weight: {
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
+    allowNull: true,
+  },
+  weight_unit: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'g',
+  },
+  length: {
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
+    allowNull: true,
+  },
+  width: {
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
+    allowNull: true,
+  },
+  height: {
+    type: DataTypes.DECIMAL(10, 2).UNSIGNED,
+    allowNull: true,
+  },
+  dimensions_unit: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'mm',
+  },
 }, {
   paranoid: true,
   tableName: 'articles',
