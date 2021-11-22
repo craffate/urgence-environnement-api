@@ -29,16 +29,17 @@ router.route('/')
         include: [{model: Image, attributes: ['id', 'filename', 'mimetype', 'path']}],
         limit: pageLimit,
         offset: 0,
+        distinct: 'id',
         where: {quantity: {[Op.gt]: 0}},
         order: [['updated_at', 'DESC']],
       };
 
       if (req.query.count && req.query.count > 0) {
-        pageLimit = parseInt(req.query.count);
+        pageLimit = Number.parseInt(req.query.count);
         query['limit'] = pageLimit;
       }
       if (req.query.page && req.query.page > 0) {
-        query['offset'] = (pageLimit * req.query.page) - pageLimit;
+        query['offset'] = (pageLimit * Number.parseInt(req.query.page)) - pageLimit;
       }
       if (req.query.category) {
         query['include'].push({
@@ -52,7 +53,12 @@ router.route('/')
           [Op.like]: '%' + req.query.name + '%',
         };
       }
-      res.status(200).json(await Article.findAll(query));
+
+      const ret = await Article.findAndCountAll(query);
+      res.status(200).json({
+        articles: ret.rows,
+        totalPages: Math.ceil(ret.count / pageLimit),
+      });
     })
     .post(async (req, res) => {
       const category = await Category.findByPk(req.body.Category.id);
