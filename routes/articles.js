@@ -6,8 +6,6 @@ const Article = require('../models/article');
 const Category = require('../models/category');
 const Image = require('../models/image');
 
-const pageLimit = 10;
-
 router.param('articleId', async (req, res, next, id) => {
   const query = {
     attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity',
@@ -23,6 +21,7 @@ router.param('articleId', async (req, res, next, id) => {
 
 router.route('/')
     .get(async (req, res) => {
+      let pageLimit = 10;
       const query = {
         attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity',
           'weight', 'weight_unit',
@@ -34,6 +33,10 @@ router.route('/')
         order: [['updated_at', 'DESC']],
       };
 
+      if (req.query.count && req.query.count > 0) {
+        pageLimit = parseInt(req.query.count);
+        query['limit'] = pageLimit;
+      }
       if (req.query.page && req.query.page > 0) {
         query['offset'] = (pageLimit * req.query.page) - pageLimit;
       }
