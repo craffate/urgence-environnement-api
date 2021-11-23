@@ -27,12 +27,16 @@ router.route('/')
 
       res.status(200).json(ret);
     })
-    .post(upload.single('image'), async (req, res) => {
-      const ret = await Image.build(req.file);
-      ret.ArticleId = req.body.articleId;
-      ret.save();
+    .post(upload.array('images'), async (req, res) => {
+      let image;
 
-      res.status(200).json(ret);
+      for (const file of req.files) {
+        image = await Image.build(file);
+        image.ArticleId = req.body.articleId;
+        await image.save();
+      }
+
+      res.status(200).send();
     });
 
 router.route('/:imageId')
