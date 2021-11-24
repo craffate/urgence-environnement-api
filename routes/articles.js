@@ -47,7 +47,7 @@ router.route('/')
       if (req.query.category) {
         query['include'].push({
           model: Category,
-          attributes: [],
+          attributes: ['id', 'name', 'slug', 'description'],
           where: {slug: req.query.category},
         });
       }
