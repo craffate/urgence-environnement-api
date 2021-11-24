@@ -34,6 +34,9 @@ router.route('/')
         order: [['updated_at', 'DESC']],
       };
 
+      if (req.query.quantity) {
+        query['where']['quantity'] = {[Op.gt]: req.query.quantity};
+      }
       if (req.query.count && req.query.count > 0) {
         pageLimit = Number.parseInt(req.query.count);
         query['limit'] = pageLimit;
