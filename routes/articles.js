@@ -37,9 +37,9 @@ router.route('/')
       if (req.query.quantity) {
         query['where']['quantity'] = {[Op.gt]: req.query.quantity};
       }
-      if (req.query.count && req.query.count > 0) {
+      if (req.query.count) {
         pageLimit = Number.parseInt(req.query.count);
-        query['limit'] = pageLimit;
+        query['limit'] = pageLimit || null;
       }
       if (req.query.page && req.query.page > 0) {
         query['offset'] = (pageLimit * Number.parseInt(req.query.page)) - pageLimit;
