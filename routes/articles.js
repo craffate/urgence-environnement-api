@@ -91,6 +91,9 @@ router.route('/:articleId')
     })
     .patch(async (req, res) => {
       await req.article.update(req.body);
+      if (req.body.Category) {
+        await req.article.setCategory(req.body.Category.id);
+      }
 
       res.status(200).send();
     })
