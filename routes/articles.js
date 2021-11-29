@@ -11,7 +11,10 @@ router.param('articleId', async (req, res, next, id) => {
     attributes: ['id', 'sku', 'name', 'subtitle', 'description', 'price', 'quantity',
       'weight', 'weight_unit',
       'length', 'width', 'height', 'dimensions_unit', 'updated_at'],
-    include: [{model: Image, attributes: ['id', 'filename', 'mimetype', 'path']}],
+    include: [
+      {model: Category, attributes: ['id', 'name', 'slug', 'description']},
+      {model: Image, attributes: ['id', 'filename', 'mimetype', 'path']},
+    ],
   };
 
   req.article = await Article.findByPk(id, query);
@@ -49,6 +52,11 @@ router.route('/')
           model: Category,
           attributes: ['id', 'name', 'slug', 'description'],
           where: {slug: req.query.category},
+        });
+      } else {
+        query['include'].push({
+          model: Category,
+          attributes: ['id', 'name', 'slug', 'description'],
         });
       }
       if (req.query.name) {
