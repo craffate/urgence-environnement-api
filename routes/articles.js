@@ -19,7 +19,11 @@ router.param('articleId', async (req, res, next, id) => {
 
   req.article = await Article.findByPk(id, query);
 
-  next();
+  if (req.article === null) {
+    res.status(404).send();
+  } else {
+    next();
+  }
 });
 
 router.route('/')

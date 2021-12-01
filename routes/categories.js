@@ -10,7 +10,11 @@ router.param('categoryId', async (req, res, next, id) => {
 
   req.category = await Category.findByPk(id, query);
 
-  next();
+  if (req.category === null) {
+    res.status(404).send();
+  } else {
+    next();
+  }
 });
 
 router.route('/')

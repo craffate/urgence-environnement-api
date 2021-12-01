@@ -9,7 +9,11 @@ const Image = require('../models/image');
 router.param('imageId', async (req, res, next, id) => {
   req.image = await Image.findByPk(id);
 
-  next();
+  if (req.image === null) {
+    res.status(404).send();
+  } else {
+    next();
+  }
 });
 
 router.route('/')

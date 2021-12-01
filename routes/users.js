@@ -18,7 +18,7 @@ router.param('userId', async (req, res, next, id) => {
   });
 
   if (req.user === null) {
-    res.status(404).send('Not Found');
+    res.status(404).send();
   } else {
     next();
   }
