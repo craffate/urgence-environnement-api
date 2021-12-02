@@ -42,7 +42,7 @@ router.route('/')
       };
 
       if (req.query.quantity) {
-        query['where']['quantity'] = {[Op.gt]: req.query.quantity};
+        query['where']['quantity'] = {[Op.gte]: req.query.quantity};
       }
       if (req.query.count) {
         pageLimit = Number.parseInt(req.query.count);
