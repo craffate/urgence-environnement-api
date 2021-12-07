@@ -45,8 +45,8 @@ app.use(session({
     httpOnly: false,
   },
 }));
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: secrets.MAX_BODY_SIZE, extended: true}));
+app.use(bodyParser.json({limit: secrets.MAX_BODY_SIZE}));
 app.use(cors({
   origin: ['https://localhost:4200'],
   credentials: true,
