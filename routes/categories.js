@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const Category = require('../models/category');
+const sequelize = require('../db');
 
 router.param('categoryId', async (req, res, next, id) => {
   const query = {
@@ -27,9 +28,17 @@ router.route('/')
       res.status(200).json(ret);
     })
     .post(async (req, res) => {
-      const ret = await Category.create(req.body);
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await Category.create(req.body, {transaction: t});
 
-      res.status(200).json(ret);
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     });
 
 router.route('/:categoryId')
@@ -37,14 +46,30 @@ router.route('/:categoryId')
       res.status(200).json(req.category);
     })
     .patch(async (req, res) => {
-      await req.category.update(req.body);
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.category.update(req.body, {transaction: t});
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     })
     .delete(async (req, res) => {
-      await req.category.destroy();
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.category.destroy({transaction: t});
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     });
 
 

@@ -5,6 +5,7 @@ const secrets = require('../secrets');
 const multer = require('multer');
 const upload = multer({dest: secrets.STATIC_FOLDER});
 const Image = require('../models/image');
+const sequelize = require('../db');
 
 router.param('imageId', async (req, res, next, id) => {
   req.image = await Image.findByPk(id);
@@ -32,15 +33,23 @@ router.route('/')
       res.status(200).json(ret);
     })
     .post(upload.array('images'), async (req, res) => {
-      let image;
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          let image;
 
-      for (const file of req.files) {
-        image = await Image.build(file);
-        image.ArticleId = req.body.articleId;
-        await image.save();
+          for (const file of req.files) {
+            image = await Image.build(file, {transaction: t});
+            image.ArticleId = req.body.articleId;
+            await image.save({transaction: t});
+          }
+
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
       }
-
-      res.status(200).send();
     });
 
 router.route('/:imageId')
@@ -48,14 +57,30 @@ router.route('/:imageId')
       res.status(200).json(req.image);
     })
     .patch(async (req, res) => {
-      await req.image.update(req.body);
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.image.update(req.body, {transaction: t});
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     })
     .delete(async (req, res) => {
-      await req.image.destroy();
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.image.destroy({transaction: t});
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     });
 
 module.exports = router;

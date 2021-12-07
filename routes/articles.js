@@ -5,6 +5,7 @@ const Op = require('sequelize').Op;
 const Article = require('../models/article');
 const Category = require('../models/category');
 const Image = require('../models/image');
+const sequelize = require('../db');
 
 router.param('articleId', async (req, res, next, id) => {
   const query = {
@@ -76,17 +77,25 @@ router.route('/')
       });
     })
     .post(async (req, res) => {
-      const category = await Category.findByPk(req.body.Category.id);
-      const count = await Article.count({
-        include: [{model: Category, attributes: [], where: {id: req.body.Category.id}}],
-        paranoid: false,
-      });
-      const ret = await Article.create(req.body);
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          const category = await Category.findByPk(req.body.Category.id, {transaction: t});
+          const count = await Article.count({
+            include: [{model: Category, attributes: [], where: {id: req.body.Category.id}}],
+            paranoid: false,
+          }, {transaction: t});
+          const ret = await Article.create(req.body);
 
-      await ret.setCategory(req.body.Category.id);
-      await ret.update({sku: category.slug.slice(0, 3).toUpperCase() + (count + 1).toString().padStart(5, '0')});
+          await ret.setCategory(req.body.Category.id, {transaction: t});
+          await ret.update({sku: category.slug.slice(0, 3).toUpperCase() + (count + 1).toString().padStart(5, '0')}, {transaction: t});
 
-      res.status(200).json(ret);
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     });
 
 router.route('/:articleId')
@@ -94,17 +103,33 @@ router.route('/:articleId')
       res.status(200).json(req.article);
     })
     .patch(async (req, res) => {
-      await req.article.update(req.body);
-      if (req.body.Category) {
-        await req.article.setCategory(req.body.Category.id);
-      }
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.article.update(req.body, {transaction: t});
+          if (req.body.Category) {
+            await req.article.setCategory(req.body.Category.id, {transaction: t});
+          }
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     })
     .delete(async (req, res) => {
-      await req.article.destroy();
+      try {
+        const status = await sequelize.transaction(async (t) => {
+          await req.article.destroy({transaction: t});
 
-      res.status(200).send();
+          return 200;
+        });
+
+        res.status(status).send();
+      } catch (err) {
+        res.status(500).send();
+      }
     });
 
 module.exports = router;
