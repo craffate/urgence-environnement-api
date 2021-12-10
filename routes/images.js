@@ -2,6 +2,7 @@
 
 const router = require('express').Router();
 const secrets = require('../secrets');
+const fs = require('fs');
 const multer = require('multer');
 const upload = multer({dest: secrets.STATIC_FOLDER});
 const Image = require('../models/image');
@@ -80,6 +81,10 @@ router.route('/:imageId')
         res.status(status).send();
       } catch (err) {
         res.status(500).send();
+      } finally {
+        if (fs.existsSync(req.image.path)) {
+          fs.unlinkSync(req.image.path);
+        }
       }
     });
 

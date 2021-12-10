@@ -23,11 +23,10 @@ const Image = sequelize.define('Image', {
     allowNull: false,
   },
 }, {
-  paranoid: true,
+  paranoid: false,
   tableName: 'images',
   createdAt: 'created_at',
   updatedAt: 'updated_at',
-  deletedAt: 'deleted_at',
 });
 
 module.exports = Image;
