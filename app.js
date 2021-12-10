@@ -1,8 +1,6 @@
 'use strict';
 
 const secrets = require('./secrets.js');
-const https = require('https');
-const fs = require('fs');
 const express = require('express');
 const sequelize = require('./db');
 const session = require('express-session');
@@ -22,10 +20,6 @@ Image.belongsTo(Article);
 Category.hasMany(Article);
 Article.belongsTo(Category);
 
-const httpsOptions = {
-  key: fs.readFileSync(secrets.SSL_KEY),
-  cert: fs.readFileSync(secrets.SSL_CERT),
-};
 
 const sessionStore = new SequelizeStore({
   db: sequelize,
@@ -41,14 +35,14 @@ app.use(session({
   name: 'sid',
   store: sessionStore,
   cookie: {
-    secure: true,
+    secure: false,
     httpOnly: false,
   },
 }));
 app.use(bodyParser.urlencoded({limit: secrets.MAX_BODY_SIZE, extended: true}));
 app.use(bodyParser.json({limit: secrets.MAX_BODY_SIZE}));
 app.use(cors({
-  origin: ['https://localhost:4200'],
+  origin: ['http://localhost:4200'],
   credentials: true,
 }));
 
@@ -60,6 +54,6 @@ app.use('/categories', require('./routes/categories'));
 
 app.use('/static/', express.static('./static'));
 
-https.createServer(httpsOptions, app).listen(port, 'localhost', async () => {
+app.listen(port, 'localhost', async () => {
   console.log(`Listening on port ${port}`);
 });
