@@ -54,6 +54,8 @@ app.use('/categories', require('./routes/categories'));
 
 app.use('/static/', express.static('./static'));
 
+app.disable('x-powered-by');
+
 app.listen(port, 'localhost', async () => {
   console.log(`Listening on port ${port}`);
 });
